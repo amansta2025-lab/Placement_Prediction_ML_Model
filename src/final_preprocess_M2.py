@@ -1,3 +1,8 @@
+# --------------------------------------------
+# Placement Prediction Dataset Preprocessing
+# --------------------------------------------
+
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -7,12 +12,29 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 input_file = "C:/Users/AMAN/Documents/placement_prediction/dataset/placement_predict_50K_Raw.csv"
 output_file = "C:/Users/AMAN/Documents/placement_prediction/dataset/final_preprocess_M2.csv"
 
+
 df = pd.read_csv(input_file)
 
+
+# Create a copy so original dataset remains unchanged
 processed_df = df.copy()
+
+
 print("Original Dataset Shape:", processed_df.shape)
+
+
+# --------------------------------------------
+# Remove Duplicate Records
+# --------------------------------------------
 processed_df.drop_duplicates(inplace=True)
 
+
+# --------------------------------------------
+# Handle Missing Values
+# --------------------------------------------
+
+
+# Numeric Columns
 numeric_cols = processed_df.select_dtypes(include=['int64', 'float64']).columns
 
 
@@ -20,12 +42,17 @@ for col in numeric_cols:
    processed_df[col].fillna(processed_df[col].median(), inplace=True)
 
 
+# Categorical Columns
 categorical_cols = processed_df.select_dtypes(include=['object']).columns
 
 
 for col in categorical_cols:
    processed_df[col].fillna(processed_df[col].mode()[0], inplace=True)
 
+
+# --------------------------------------------
+# Clean Text Data
+# --------------------------------------------
 for col in categorical_cols:
    # strip() Removes leading and trailing spaces from text values
    processed_df[col] = processed_df[col].str.strip()
@@ -52,6 +79,7 @@ scaler = StandardScaler()
 processed_df[numeric_cols] = scaler.fit_transform(
    processed_df[numeric_cols]
 )
+
 
 # --------------------------------------------
 # Save Preprocessed Dataset
